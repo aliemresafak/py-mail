@@ -1,0 +1,1 @@
+This is a project of mail client based smptlib and python version will >3.7
