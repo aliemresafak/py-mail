@@ -18,9 +18,10 @@ git clone https://github.com/aliemresafak/py-mail.git
 ```python
 import pymail
 
-foobar.pluralize('word') # returns 'words'
-foobar.pluralize('goose') # returns 'geese'
-foobar.singularize('phenomena') # returns 'phenomenon'
+mail_settings = MailSettings(host="host_address", port=9999, sender="sender_mail", password="sender_password")
+mail = Mail(settings=mail_settings)
+
+mail.send_mail(to="reicever_mail_addresses", cc="cc_mail_addresses", subject="", message="Electronic mail message", files=[])
 ```
 
 ## Contributing
