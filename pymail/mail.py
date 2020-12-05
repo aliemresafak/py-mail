@@ -41,7 +41,7 @@ class Mail:
             value = ", ".join(value)
         return value
 
-    def send_mail(self, to, cc=None, subject=None, message=None, files=[]):
+    def send_mail(self, to: typing.Union[str, list], cc: typing.Union[str, list]=None, subject=None, message=None, files=[]):
         to = self._list_to_string(to)
         cc = self._list_to_string(cc)
 
