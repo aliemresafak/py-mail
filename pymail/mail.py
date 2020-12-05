@@ -14,9 +14,10 @@ class MailSettings:
         "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
     )
     host: str
+    port: int
     sender: str
     password: str
-    port: int
+    
 
     def __post_init__(self):
         if not self.check_ip(self.host):
