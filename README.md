@@ -1,6 +1,3 @@
-This is a project of mail client based smptlib and python version will >3.7
-
-
 # pymail
 
 Pymail is a Python library for mailing client.
