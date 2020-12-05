@@ -1,4 +1,6 @@
+import re
 import smtplib
+import typing
 from dataclasses import dataclass
 from email import encoders
 from email.mime.base import MIMEBase
@@ -8,49 +10,43 @@ from email.mime.text import MIMEText
 
 @dataclass
 class MailSettings:
+    ip_regex = re.compile(
+        "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+    )
     host: str
     sender: str
     password: str
     port: int
 
-    def check_ip(self):
-        arr_host = []
-        try:
-            arr_host = [int(i) for i in self.host.split(".")]
-        except Exception:
-            return False
+    def __post_init__(self):
+        if not self.check_ip(self.host):
+            raise Exception("Check entered ip")
 
-        if len(arr_host) < 3:
-            return False
-
-        for i in arr_host:
-            if not isinstance(i, int):
-                return False
-        for i in arr_host:
-            if i >= 1 and i <= 255:
-                continue
-            else:
-                return False
-        return True
+    @classmethod
+    def check_ip(cls, host: str) -> bool:
+        return cls.ip_regex.match(host)
 
 
 class Mail:
     def __init__(self, settings: MailSettings):
         self.settings = settings
 
-    def make_zip(self):
+    # TODO make_zip arguman alirsa daha iyi olur
+    def make_zip(self, files):
         pass
 
-    def send_mail(self, to, cc=None, subject=None, message=None, files=[]):
-        if isinstance(to, list):
-            to = ", ".join(to)
+    def _list_to_string(self, value: typing.Union[str, list]) -> str:
+        if isinstance(value, list):
+            value = ", ".join(value)
+        return value
 
-        if isinstance(cc, list):
-            cc = ", ".join(cc)
+    def send_mail(self, to, cc=None, subject=None, message=None, files=[]):
+        to = self._list_to_string(to)
+        cc = self._list_to_string(cc)
 
         if len(files) > 0:
             mail = MIMEMultipart("alternative")
-            self.make_zip()
+            self.make_zip(files)
         else:
             mail = MIMEText(message)
 
@@ -63,5 +59,5 @@ class Mail:
         session.starttls()
         session.login(user=self.settings.sender, password=self.settings.password)
         text = mail.as_string()
-        session.sendmail(from_addr=self.settings.sender, to_addrs=[to], msg=text)
+        session.sendmail(from_addr=self.settings.sender, to_addrs=to, msg=text)
         session.close()
